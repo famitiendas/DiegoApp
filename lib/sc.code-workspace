@@ -4,5 +4,12 @@
 			"path": "D:\\Desarrollo\\Kevin\\famitiendas_distribuciones"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.classpath": true,
+			"**/.project": true,
+			"**/.settings": true,
+			"**/.factorypath": true
+		}
+	}
 }
