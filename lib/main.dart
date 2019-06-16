@@ -18,6 +18,7 @@ Menu.tag : (context) => Menu(),
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Famitiendas SC',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

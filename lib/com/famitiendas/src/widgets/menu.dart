@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'CalificarCliente.dart';
 
 class Menu extends StatefulWidget {
   static String tag = 'Menu';
@@ -17,13 +18,20 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
+    void rediretClient() async {
+    print('Hola mundo rediretClient');
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (contexto) {
+      return new CalificaCliente();
+    }));
+  }
     final calificarClientew = Padding(
       padding: EdgeInsets.symmetric(vertical: 12.0),
       child: RaisedButton(
           shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(16.0)),
           onPressed: () {
-            // loguearse();
+            rediretClient();
           },
           padding: EdgeInsets.all(12),
           color: Colors.lightBlueAccent,
