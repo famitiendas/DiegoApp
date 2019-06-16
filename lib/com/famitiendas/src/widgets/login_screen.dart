@@ -1,5 +1,6 @@
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   static String tag = 'LoginScreen';
@@ -20,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isVisible;
   BuildContext contexto;
   TextEditingController _phoneNumber = new TextEditingController();
+  BuildContext contexto;
+  TextEditingController _user = new TextEditingController();
   TextEditingController _passw = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -30,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.text,
       autofocus: false,
       enabled: loginEnabled != null ? loginEnabled : true,
-      controller: _phoneNumber,
+      controller: _user,
       decoration: InputDecoration(
         hintText: 'ingrese usuario',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -43,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         autofocus: false,
         obscureText: true,
         //    controller: _passw,
+        controller: _passw,
         validator: (value) {
           if (value.isEmpty) {
             return 'ingrese Contraseña';
@@ -64,31 +68,12 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () {
-          loguearse();
+          loguearse(_user.text, _passw.text);
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
         child: Text('Entrar', style: TextStyle(color: Colors.white)),
       ),
-    );
-    final logo = Hero(
-      tag: 'hero',
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 48.0,
-        child: Image.asset('assets/logo.png'),
-      ),
-    );
-    final firstRow = new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        loginButton,
-        SizedBox(
-          height: 28.0,
-        ),
-        Image.asset('assets/logo.png'),
-      ],
     );
 
     return Scaffold(
@@ -129,11 +114,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void loguearse() async {
+  void loguearse(String user, String pass) async {
+    await Firestore.instance
+        .collection('usuarios')
+        .getDocuments()
+        .then((docs) => {
+              docs.documents.forEach((doc) => {
+                    if (doc.data['usuario'] == user &&
+                        doc.data['contraseña'] == pass)
+                      {
+                        Navigator.of(contexto).pushReplacement(
+                            MaterialPageRoute(builder: (contexto) {
+                          return new Menu();
+                        }))
+                      }
+                  })
+            });
+
     print('Hola mundo');
-    Navigator.of(contexto)
-        .pushReplacement(MaterialPageRoute(builder: (contexto) {
-      return new Menu();
-    }));
   }
 }
