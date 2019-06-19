@@ -1,4 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/login_screen.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
 import 'package:flutter/material.dart';
+
+import 'Dialogs.dart';
 
 class CalificaCliente extends StatefulWidget {
   CalificaCliente({Key key}) : super(key: key);
@@ -12,69 +18,57 @@ class _CalificaClienteState extends State<CalificaCliente> {
   bool isVisible;
   int cantidad = 1;
   var preguntas = [
-    {
-      "Pregunta":
-          "Pregunta 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
-      "valor": ""
-    },
-    {"Pregunta": "Pregunta 222222222222222222222", "valor": ""},
-    {"Pregunta": "Pregunta 2323232323232323232323233", "valor": ""},
-    {
-      "Pregunta":
-          "Pregunta 2323232333333333333333333333333333333333333333333333333333333334",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta 333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333335",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta 3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333336",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta 73333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta 333333333333333333333333333333333333333333333333333333333333333333333333333333333322222222222222222222222222228",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta 222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222229",
-      "valor": ""
-    },
-    {
-      "Pregunta":
-          "Pregunta  99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999910",
-      "valor": ""
-    }
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""},
+    {"Pregunta": "", "valor": ""}
   ];
   var opciones = ["Si", "No"];
 
   BuildContext contexto;
-  TextEditingController _phoneNumber = new TextEditingController();
+  TextEditingController nombreCliente = new TextEditingController();
+  TextEditingController codigoClient = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     contexto = context;
     void loguearse() async {
-      print('Hola mundo');
-      Navigator.of(contexto)
-          .pushReplacement(MaterialPageRoute(builder: (contexto) {
-        return new CalificaCliente();
-      }));
+      bool banderaRespuestas = false;
+      preguntas.forEach((respuesta) => {
+            if (respuesta["valor"] == "") {banderaRespuestas = true}
+          });
+      if (!banderaRespuestas) {
+        Calification calification;
+        var now = new DateTime.now();
+        calification = new Calification.toSave(nombreCliente.toString(),
+            codigoClient.toString(), now.toString(), []);
+        Firestore.instance
+            .collection(codigoClient.toString())
+            .document()
+            .setData(calification.toJson())
+            .then((data) {
+          Navigator.of(contexto).pop();
+        });
+        Navigator.of(contexto)
+            .pushReplacement(MaterialPageRoute(builder: (contexto) {
+          return new Menu();
+        }));
+      } else {
+        new Dialogs().showDialogLogin("Error!",
+            "No has llenado todas las respuestas del formulario", context);
+      }
     }
 
     final number = TextFormField(
       keyboardType: TextInputType.text,
       autofocus: false,
-      enabled: loginEnabled != null ? loginEnabled : true,
-      controller: _phoneNumber,
+      controller: nombreCliente,
       decoration: InputDecoration(
         hintText: 'Nombre Cliente',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -85,6 +79,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
       //  visible: isVisible != null ? isVisible : true,
       child: TextFormField(
         autofocus: false,
+        controller: codigoClient,
         obscureText: true,
         //    controller: _passw,
         decoration: InputDecoration(
@@ -97,7 +92,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
       ),
     );
     final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.symmetric(vertical: 26.0),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
@@ -107,7 +102,8 @@ class _CalificaClienteState extends State<CalificaCliente> {
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
-        child: Text('Entrar', style: TextStyle(color: Colors.white)),
+        child:
+            Text('Enviar Calificación', style: TextStyle(color: Colors.white)),
       ),
     );
     final headerOptions = Row(
@@ -126,53 +122,190 @@ class _CalificaClienteState extends State<CalificaCliente> {
       ],
     );
     final cumplimiento = "";
-    final listadoOpciones = ListView.builder(
-        itemCount: preguntas.length,
-        shrinkWrap: preguntas.length > 0,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-              width: MediaQuery.of(context).size.width * 0.95,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.65,
-                    child: Text(
-                      "${index + 1}.   ${preguntas[index]["Pregunta"]}",
-                      style: TextStyle(color: Colors.black),
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  SizedBox(width: 15,),
-                  Container(
-                     width: MediaQuery.of(context).size.width*0.15,
-                      child: DropdownButton( 
-                    hint: new Text(
-                      "${preguntas[index]["valor"]}",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    items: opciones
-                        .map((String value) => new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(
-                                value,
-                                overflow: TextOverflow.fade,
-                                style: TextStyle(fontSize: 16),
-                                textAlign: TextAlign.start,
+    var entradas = 0;
+    final listado = Container(
+        height: MediaQuery.of(context).size.height * 0.55,
+        child: StreamBuilder(
+            stream: Firestore.instance.collection("preguntas").snapshots(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.data != null || entradas != 0) {
+                return snapshot.data.documents.length != 0
+                    ? new Scaffold(
+                        body: new Container(
+                        height: MediaQuery.of(context).size.height * 0.99,
+                        padding: EdgeInsets.all(2.0),
+                        child: ListView.builder(
+                            itemCount: snapshot.data.documents.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.95,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.65,
+                                            child: Text(
+                                              "${index + 1}.   ${preguntas[index]["Pregunta"]}",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.15,
+                                              child: DropdownButton(
+                                                hint: new Text(
+                                                  "${preguntas[index]["valor"]}",
+                                                  style:
+                                                      TextStyle(fontSize: 16.0),
+                                                ),
+                                                items: opciones
+                                                    .map((String value) =>
+                                                        new DropdownMenuItem<
+                                                            String>(
+                                                          value: value,
+                                                          child: new Text(
+                                                            value,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .fade,
+                                                            style: TextStyle(
+                                                                fontSize: 16),
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                          ),
+                                                        ))
+                                                    .toList(),
+                                                onChanged: (String newValue) {
+                                                  setState(() {
+                                                    preguntas[index]["valor"] =
+                                                        newValue;
+                                                    //value = newValue;
+                                                    //bank = newValue;
+                                                  });
+                                                },
+                                              )),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      )
+                                    ],
+                                  ));
+                            }),
+                        color: Colors.green[400],
+                      ))
+                    : new Scaffold(
+                        body: new Container(
+                          height: 150.0,
+                          margin: EdgeInsets.all(60.0),
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFF5F5F5),
+                              border: Border.all(
+                                color: Colors.black87,
+                                width: 0.9,
+                              )),
+                          child: new Column(
+                            children: <Widget>[
+                              new Text(
+                                "No tienes preguntas",
+                                maxLines: 1000,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ))
-                        .toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        preguntas[index]["valor"]=newValue;
-                        //value = newValue;
-                        //bank = newValue;
-                      });
-                    },
-                  )),
-                ],
-              ));
-        });
+                              new Icon(
+                                Icons.announcement,
+                                size: 80.0,
+                                color: Color(0xFF00BCD4),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+              } else {
+                entradas++;
+                return new Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }));
+    final listadoOpciones = Container(
+        height: MediaQuery.of(context).size.height * 0.55,
+        child: ListView.builder(
+            shrinkWrap: preguntas.length > 0,
+            scrollDirection: Axis.vertical,
+            itemCount: preguntas.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.65,
+                            child: Text(
+                              "${index + 1}.   ${preguntas[index]["Pregunta"]}",
+                              style: TextStyle(color: Colors.black),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              child: DropdownButton(
+                                hint: new Text(
+                                  "${preguntas[index]["valor"]}",
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                items: opciones
+                                    .map((String value) =>
+                                        new DropdownMenuItem<String>(
+                                          value: value,
+                                          child: new Text(
+                                            value,
+                                            overflow: TextOverflow.fade,
+                                            style: TextStyle(fontSize: 16),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ))
+                                    .toList(),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    preguntas[index]["valor"] = newValue;
+                                    //value = newValue;
+                                    //bank = newValue;
+                                  });
+                                },
+                              )),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5.0,
+                      )
+                    ],
+                  ));
+            }));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -183,7 +316,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
           padding: EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
             SizedBox(
-              height: 98.0,
+              height: 60.0,
             ),
             new Center(
               child: new Column(
@@ -195,7 +328,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
                     height: 18.0,
                   ),
                   headerOptions,
-                  listadoOpciones,
+                  listado,
                   SizedBox(height: 5),
                   loginButton
                 ],
