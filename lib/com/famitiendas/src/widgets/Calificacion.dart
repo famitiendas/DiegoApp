@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 class Calification {
   String key;
   String nameClient;
   String codeClient;
   String date;
-  List<Respuestas> listResp; 
+  List<String> listResp; 
   Calification(
       this.nameClient,
       this.codeClient,
@@ -42,4 +40,13 @@ class Respuestas{
   String valor;
 
   Respuestas(this.pregunta,this.valor);
+
+Respuestas.toSave(
+      this.pregunta,
+      this.valor);
+
+  toJson() => {
+        "pregunta": pregunta,
+        "valor": valor
+      };
 }

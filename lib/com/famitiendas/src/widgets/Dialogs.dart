@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 
-class Dialogs { 
+import 'menu.dart';
+
+class Dialogs {
   BuildContext contexto;
-   void showDialogLogin(String resultado, String mensaje, BuildContext context) {
+  void showDialogLogin(String resultado, String mensaje, BuildContext context) {
     // flutter defined function
     contexto = context;
     showDialog(
@@ -18,6 +20,13 @@ class Dialogs {
               child: new Text("Aceptar"),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (resultado == "Exitoso") {
+                  Navigator.of(contexto)
+                      .pushReplacement(MaterialPageRoute(builder: (contexto) {
+                    return new Menu();
+                  }));
+                }
+                
               },
             ),
           ],
@@ -25,6 +34,4 @@ class Dialogs {
       },
     );
   }
-
-   
 }

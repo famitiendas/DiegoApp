@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart';
-import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/login_screen.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
 import 'package:flutter/material.dart';
 
@@ -17,19 +16,8 @@ class _CalificaClienteState extends State<CalificaCliente> {
   bool loginEnabled;
   bool isVisible;
   int cantidad = 1;
-  var preguntas = [
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""},
-    {"Pregunta": "", "valor": ""}
-  ];
+  List<Respuestas> respuestas= [];
+  var preguntas = [];
   var opciones = ["Si", "No"];
 
   BuildContext contexto;
@@ -41,24 +29,36 @@ class _CalificaClienteState extends State<CalificaCliente> {
     void loguearse() async {
       bool banderaRespuestas = false;
       preguntas.forEach((respuesta) => {
-            if (respuesta["valor"] == "") {banderaRespuestas = true}
+            if (respuesta == "") {banderaRespuestas = true}
           });
       if (!banderaRespuestas) {
-        Calification calification;
-        var now = new DateTime.now();
-        calification = new Calification.toSave(nombreCliente.toString(),
-            codigoClient.toString(), now.toString(), []);
-        Firestore.instance
-            .collection(codigoClient.toString())
-            .document()
-            .setData(calification.toJson())
-            .then((data) {
-          Navigator.of(contexto).pop();
-        });
-        Navigator.of(contexto)
-            .pushReplacement(MaterialPageRoute(builder: (contexto) {
-          return new Menu();
-        }));
+        int contador=0;
+        List<String> respuestasString=[];
+        for (Respuestas respuesta in respuestas) {
+          respuesta.valor = preguntas[contador];
+          contador++;
+          String resFin = '{"pregunta":"${respuesta.pregunta}","valor":"${respuesta.valor}"}';
+          respuestasString.add(resFin);
+        } 
+        try {
+          Calification calification;
+          var now = new DateTime.now();
+          calification = new Calification.toSave("${nombreCliente.text}",
+              "${codigoClient.text}", now.toString(),respuestasString);
+          Firestore.instance
+              .collection('calificaciones')
+              .document("${codigoClient.text}")
+              .collection("${now.toString()}")
+              .document()
+              .setData(calification.toJson())
+              .then((data) {
+                new Dialogs().showDialogLogin("Exitoso",
+            "Tu calificación se ha guardado con exito", context);
+            
+          });
+        } on Exception {
+          new Dialogs().showDialogLogin("Error!", "erororoororor", context);
+        }
       } else {
         new Dialogs().showDialogLogin("Error!",
             "No has llenado todas las respuestas del formulario", context);
@@ -121,7 +121,6 @@ class _CalificaClienteState extends State<CalificaCliente> {
         )),
       ],
     );
-    final cumplimiento = "";
     var entradas = 0;
     final listado = Container(
         height: MediaQuery.of(context).size.height * 0.55,
@@ -137,6 +136,13 @@ class _CalificaClienteState extends State<CalificaCliente> {
                         child: ListView.builder(
                             itemCount: snapshot.data.documents.length,
                             itemBuilder: (BuildContext context, int index) {
+                              if (preguntas.length <
+                                  snapshot.data.documents.length) {
+                                Respuestas respuesta = new Respuestas("${snapshot.data.documents[index].data["Pregunta"]}", "${snapshot.data.documents[index].data["valor"]}");
+                                respuestas.add(respuesta);
+                                preguntas.add(snapshot
+                                    .data.documents[index].data["valor"]);
+                              }
                               return Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.95,
@@ -152,7 +158,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
                                                     .width *
                                                 0.65,
                                             child: Text(
-                                              "${index + 1}.   ${preguntas[index]["Pregunta"]}",
+                                              "${index + 1}.   ${snapshot.data.documents[index].data["Pregunta"]}",
                                               style: TextStyle(
                                                   color: Colors.black),
                                               textAlign: TextAlign.start,
@@ -168,7 +174,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
                                                   0.15,
                                               child: DropdownButton(
                                                 hint: new Text(
-                                                  "${preguntas[index]["valor"]}",
+                                                  "${preguntas[index]}",
                                                   style:
                                                       TextStyle(fontSize: 16.0),
                                                 ),
@@ -191,8 +197,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
                                                     .toList(),
                                                 onChanged: (String newValue) {
                                                   setState(() {
-                                                    preguntas[index]["valor"] =
-                                                        newValue;
+                                                    preguntas[index] = newValue;
                                                     //value = newValue;
                                                     //bank = newValue;
                                                   });
@@ -206,7 +211,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
                                     ],
                                   ));
                             }),
-                        color: Colors.green[400],
+                        color: Colors.white,
                       ))
                     : new Scaffold(
                         body: new Container(
