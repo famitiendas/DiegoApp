@@ -18,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool loginEnabled;
-  bool isVisible;
+  bool isVisible; 
   BuildContext contexto;
   TextEditingController _phoneNumber = new TextEditingController();
   BuildContext contexto;
