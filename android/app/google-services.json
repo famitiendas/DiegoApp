@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "965751469545",
+    "firebase_url": "https://famitiendas-d2a0a.firebaseio.com",
+    "project_id": "famitiendas-d2a0a",
+    "storage_bucket": "famitiendas-d2a0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965751469545:android:e1e923eedb31c67f",
+        "android_client_info": {
+          "package_name": "com.example.famitiendasdistribuciones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965751469545-q8t9majkbhoesufltroklnj6411qvg72.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6Mh6Ntc9OWRgoGLCWEfbo6CBPfHoVfMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965751469545-q8t9majkbhoesufltroklnj6411qvg72.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

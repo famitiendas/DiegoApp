@@ -20,8 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool loginEnabled;
   bool isVisible; 
   BuildContext contexto;
-  TextEditingController _phoneNumber = new TextEditingController();
-  BuildContext contexto;
   TextEditingController _user = new TextEditingController();
   TextEditingController _passw = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -128,6 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             MaterialPageRoute(builder: (contexto) {
                           return new Menu();
                         }))
+                      }else{
+                        print("credenciales invalidas!!")
                       }
                   })
             });

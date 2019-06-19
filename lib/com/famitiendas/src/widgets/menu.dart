@@ -1,3 +1,4 @@
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'CalificarCliente.dart';
 
@@ -16,8 +17,10 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  BuildContext contexto ;
   @override
   Widget build(BuildContext context) {
+    contexto = context;
     void rediretClient() async {
     print('Hola mundo rediretClient');
     Navigator.of(context)
@@ -121,7 +124,10 @@ class _MenuState extends State<Menu> {
           shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(16.0)),
           onPressed: () {
-            // loguearse();
+              Navigator.of(contexto).pushReplacement(
+                            MaterialPageRoute(builder: (contexto) {
+                          return new Notificaciones();
+                        }));
           },
           padding: EdgeInsets.all(12),
           color: Colors.lightBlueAccent,
