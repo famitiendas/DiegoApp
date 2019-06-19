@@ -111,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+//metodo de login para loguearse
   void loguearse(String user, String pass) async {
     await Firestore.instance
         .collection('usuarios')
