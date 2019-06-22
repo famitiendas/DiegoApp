@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart';
-import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart'; 
 import 'package:flutter/material.dart';
 
 import 'Dialogs.dart';
@@ -37,7 +36,8 @@ class _CalificaClienteState extends State<CalificaCliente> {
         for (Respuestas respuesta in respuestas) {
           respuesta.valor = preguntas[contador];
           contador++;
-          String resFin = '{"pregunta":"${respuesta.pregunta}","valor":"${respuesta.valor}"}';
+          //Respuestas resFin = new Respuestas.toSave(respuesta.pregunta, respuesta.valor);
+          String resFin = '${respuesta.valor}';
           respuestasString.add(resFin);
         } 
         try {
@@ -47,14 +47,12 @@ class _CalificaClienteState extends State<CalificaCliente> {
               "${codigoClient.text}", now.toString(),respuestasString);
           Firestore.instance
               .collection('calificaciones')
-              .document("${codigoClient.text}")
-              .collection("${now.toString()}")
               .document()
               .setData(calification.toJson())
               .then((data) {
                 new Dialogs().showDialogLogin("Exitoso",
             "Tu calificación se ha guardado con exito", context);
-            
+            //generar notificación 
           });
         } on Exception {
           new Dialogs().showDialogLogin("Error!", "erororoororor", context);
@@ -250,66 +248,6 @@ class _CalificaClienteState extends State<CalificaCliente> {
                   child: CircularProgressIndicator(),
                 );
               }
-            }));
-    final listadoOpciones = Container(
-        height: MediaQuery.of(context).size.height * 0.55,
-        child: ListView.builder(
-            shrinkWrap: preguntas.length > 0,
-            scrollDirection: Axis.vertical,
-            itemCount: preguntas.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.65,
-                            child: Text(
-                              "${index + 1}.   ${preguntas[index]["Pregunta"]}",
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Container(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              child: DropdownButton(
-                                hint: new Text(
-                                  "${preguntas[index]["valor"]}",
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                items: opciones
-                                    .map((String value) =>
-                                        new DropdownMenuItem<String>(
-                                          value: value,
-                                          child: new Text(
-                                            value,
-                                            overflow: TextOverflow.fade,
-                                            style: TextStyle(fontSize: 16),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    preguntas[index]["valor"] = newValue;
-                                    //value = newValue;
-                                    //bank = newValue;
-                                  });
-                                },
-                              )),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      )
-                    ],
-                  ));
             }));
 
     return Scaffold(

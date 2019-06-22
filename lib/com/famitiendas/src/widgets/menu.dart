@@ -1,6 +1,7 @@
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'CalificarCliente.dart';
+import 'ResultadoInicial.dart';
 import 'package:onesignal/onesignal.dart';
 
 class Menu extends StatefulWidget {
@@ -130,9 +131,9 @@ class _MenuState extends State<Menu> {
           shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(16.0)),
           onPressed: () {
-              Navigator.of(contexto).pushReplacement(
+              Navigator.of(contexto).push(
                             MaterialPageRoute(builder: (contexto) {
-                          return new Notificaciones();
+                          return new ResultadoInicial();//ResultadoInicial
                         }));
           },
           padding: EdgeInsets.all(12),
