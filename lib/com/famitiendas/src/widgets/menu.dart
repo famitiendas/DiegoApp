@@ -1,6 +1,7 @@
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'CalificarCliente.dart';
+import 'package:onesignal/onesignal.dart';
 
 class Menu extends StatefulWidget {
   static String tag = 'Menu';
@@ -11,6 +12,7 @@ class Menu extends StatefulWidget {
     );
   }
 
+ //f990f412-702a-4d15-ac28-f6980de8de0a 
   Menu({Key key}) : super(key: key);
 
   _MenuState createState() => _MenuState();
@@ -18,6 +20,10 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   BuildContext contexto ;
+    String _debugLabelString = "";
+  String _externalUserId;
+  bool _enableConsentButton = false;
+  bool _requireConsent = true;
   @override
   Widget build(BuildContext context) {
     contexto = context;
@@ -180,5 +186,85 @@ class _MenuState extends State<Menu> {
         ),
       ),
     );
+   Future<void> initPlatformState() async {
+    print('one signal state');
+    if (!mounted) return;
+
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    OneSignal.shared.setRequiresUserPrivacyConsent(_requireConsent);
+
+    var settings = {
+      OSiOSSettings.autoPrompt: false,
+      OSiOSSettings.promptBeforeOpeningPushUrl: true
+    };
+
+    OneSignal.shared.setNotificationReceivedHandler((notification) {
+      this.setState(() {
+        print(" Notificación : ${notification.payload.body}");
+        _debugLabelString =
+            "Received notification: \n${notification.jsonRepresentation().replaceAll("\\n", "\n")}";
+        print("look the aditional data recib: ${notification.hashCode}");
+      });
+    });
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      this.setState(() {
+        String originAccount;
+        String moneyReceived;
+        int hashcode;
+        result.notification.payload.additionalData
+            .forEach((String key, var val) {
+          if (key == 'originAccount') {
+            originAccount = val;
+          } else if (key == 'moneySent') {
+            moneyReceived = val;
+          } else if (key == 'hashcode') {
+            hashcode = val;
+          }
+        });
+      //  checkNotifications(originAccount, moneyReceived, hashcode);
+        _debugLabelString =
+            "Opened notification: \n${result.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
+      });
+    });
+
+    OneSignal.shared
+        .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+      //   print("SUBSCRIPTION STATE CHANGED: ${changes.jsonRepresentation()}");
+      if (changes.to.userId != null) {
+        //saveData(changes.to.userId);
+        print("playerID"+changes.to.userId);
+       // _storage.setItem('playerId', changes.to.userId);
+      }
+    });
+    OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
+      print("PERMISSION STATE CHANGED: ${changes.jsonRepresentation()}");
+    });
+
+    OneSignal.shared.setEmailSubscriptionObserver(
+        (OSEmailSubscriptionStateChanges changes) {
+      print("EMAIL SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
+    });
+
+    // NOTE: Replace with your own app ID from https://www.onesignal.com
+    await OneSignal.shared.init("f990f412-702a-4d15-ac28-f6980de8de0a");
+
+    await OneSignal.shared
+        .init("f990f412-702a-4d15-ac28-f6980de8de0a", iOSSettings: settings);
+
+    OneSignal.shared
+        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    bool requiresConsent = await OneSignal.shared.requiresUserPrivacyConsent();
+
+    this.setState(() {
+      _enableConsentButton = requiresConsent;
+    });
   }
+  
+  
+  }
+
 }
