@@ -24,7 +24,7 @@ dependencies:
   date_format: ^1.0.6
   intl: ^0.15.8
   onesignal: ^1.1.0 
-
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter

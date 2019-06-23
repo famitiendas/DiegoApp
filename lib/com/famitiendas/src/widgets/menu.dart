@@ -1,3 +1,4 @@
+import 'package:famitiendas_distribuciones/com/famitiendas/src/entities/push_deliver.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'CalificarCliente.dart';
@@ -25,6 +26,18 @@ class _MenuState extends State<Menu> {
   String _externalUserId;
   bool _enableConsentButton = false;
   bool _requireConsent = true;
+
+  var deliver = PushDeliver();
+
+    @override
+  void initState() {
+    deliver.initOneSignal();
+    super.initState();
+    
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     contexto = context;
@@ -86,7 +99,10 @@ class _MenuState extends State<Menu> {
           shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(16.0)),
           onPressed: () {
-            // loguearse();
+             Navigator.of(contexto).push(
+                            MaterialPageRoute(builder: (contexto) {
+                          return new Notificaciones();//ResultadoInicial
+                        }));
           },
           padding: EdgeInsets.all(12),
           color: Colors.lightBlueAccent,
@@ -187,7 +203,11 @@ class _MenuState extends State<Menu> {
         ),
       ),
     );
-   Future<void> initPlatformState() async {
+  }
+
+
+  /*
+ Future<void> initPlatformState() async {
     print('one signal state');
     if (!mounted) return;
 
@@ -212,18 +232,9 @@ class _MenuState extends State<Menu> {
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       this.setState(() {
-        String originAccount;
-        String moneyReceived;
-        int hashcode;
         result.notification.payload.additionalData
             .forEach((String key, var val) {
-          if (key == 'originAccount') {
-            originAccount = val;
-          } else if (key == 'moneySent') {
-            moneyReceived = val;
-          } else if (key == 'hashcode') {
-            hashcode = val;
-          }
+        print("key: "+key+ "val:"+val);
         });
       //  checkNotifications(originAccount, moneyReceived, hashcode);
         _debugLabelString =
@@ -264,8 +275,5 @@ class _MenuState extends State<Menu> {
       _enableConsentButton = requiresConsent;
     });
   }
-  
-  
-  }
-
+*/
 }
