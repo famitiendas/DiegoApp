@@ -12,23 +12,25 @@ class ResultadoMedio extends StatefulWidget {
 class _ResultadoMedioState extends State<ResultadoMedio> {
   @override
   Widget build(BuildContext context) {
-    LocalStorage storage = new LocalStorage('famitiendas');   
-    
+    LocalStorage storage = new LocalStorage('famitiendas');
+
     int entradas = 0;
     return new StreamBuilder(
-        stream: Firestore.instance.collection("calificaciones").snapshots(), 
+        stream: Firestore.instance.collection("calificaciones").snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (entradas != 0) { 
-            final String entrada =storage.getItem("codeClient"); 
+          if (entradas != 0) {
+            final String entrada = storage.getItem("codeClient");
             List<String> lista = [];
+            List<String> lista2 = [];
             List<String> listaIDS = [];
-            for (var item in snapshot.data.documents) { 
-              if (item.data["codeClient"] == entrada) { 
-                storage.setItem("nameClient", item["nameClient"]); 
+            for (var item in snapshot.data.documents) {
+              if (item.data["codeClient"] == entrada) {
+                storage.setItem("nameClient", item["nameClient"]);
                 lista.add(item["date"]);
+                lista2.add(item["nameClient"]);
                 listaIDS.add(item.documentID);
-              } 
-            } 
+              }
+            }
             return lista.length != 0
                 ? new Scaffold(
                     body: new ListView.builder(
@@ -38,8 +40,8 @@ class _ResultadoMedioState extends State<ResultadoMedio> {
                         GestureDetector(
                             onTap: () {
                               storage.setItem("idDocumento", listaIDS[index]);
-                               Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (contexto) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (contexto) {
                                 return new ResultadoFinal();
                               }));
                             },
@@ -73,13 +75,14 @@ class _ResultadoMedioState extends State<ResultadoMedio> {
                                         new FittedBox(
                                           child: new Text(
                                             "Nombre del cliente: " +
-                                                storage.getItem("nameClient")+"\nFecha calificación: " +
+                                                lista2[index] +
+                                                "\nFecha calificación: " +
                                                 lista[index],
                                             textAlign: TextAlign.left,
                                             style: TextStyle(fontSize: 26.0),
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                        ), 
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -91,7 +94,7 @@ class _ResultadoMedioState extends State<ResultadoMedio> {
                   ))
                 : new Scaffold(
                     body: new Container(
-                      height: 150.0, 
+                      height: 150.0,
                       width: MediaQuery.of(context).size.width * 80,
                       margin: EdgeInsets.all(60.0),
                       decoration: BoxDecoration(
