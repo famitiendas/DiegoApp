@@ -22,6 +22,17 @@ OneSignal.shared
      OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
 
+
+         OneSignal.shared
+        .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+   
+      if (changes.to.userId != null) {
+        // guardar -> changes.to.userId
+        print("playerID"+changes.to.userId);
+       
+      }
+    });
+
   }
 
 
