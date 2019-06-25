@@ -13,14 +13,21 @@ class _ResultadoInicialState extends State<ResultadoInicial> {
   @override
   Widget build(BuildContext context) {
     int entradas = 0;
+    List<String> codes = [];
     return new StreamBuilder(
         stream: Firestore.instance.collection("calificaciones").snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (entradas != 0) {
+            codes = [];
+            for (int i = 0; i < snapshot.data.documents.length; i++) {
+              if (!codes.contains(snapshot.data.documents[i]["codeClient"])) {
+                codes.add(snapshot.data.documents[i]["codeClient"]);
+              }
+            }
             return snapshot.data.documents.length != 0
                 ? new Scaffold(
                     body: new ListView.builder(
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: codes.length,
                     itemBuilder: (BuildContext context, int index) {
                       return new Row(mainAxisSize: MainAxisSize.min, children: [
                         GestureDetector(
@@ -28,17 +35,17 @@ class _ResultadoInicialState extends State<ResultadoInicial> {
                               LocalStorage storage =
                                   new LocalStorage('famitiendas');
                               storage.setItem("codeClient",
-                                  snapshot.data.documents[index]["codeClient"]);
-                                   storage.setItem("nameClient",
+                                  codes[index]);
+                              storage.setItem("nameClient",
                                   snapshot.data.documents[index]["nameClient"]);
-                              Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (contexto) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (contexto) {
                                 return new ResultadoMedio();
                               }));
                             },
                             child: Container(
                               margin: new EdgeInsets.only(
-                                  top: 5.0, left: 5.0, right: 5),
+                                  top: 5.0, left: 5.0, right: 5,bottom: 5.0),
                               width: MediaQuery.of(context).size.width * 0.9,
                               height: MediaQuery.of(context).size.height * 0.1,
                               decoration: BoxDecoration(
@@ -58,16 +65,15 @@ class _ResultadoInicialState extends State<ResultadoInicial> {
                                   new Container(
                                     margin:
                                         EdgeInsets.only(left: 20.0, top: 20.0),
-                                    width: 250,
+                                    width: 150,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         new FittedBox(
                                           child: new Text(
-                                            "Nombre del cliente: " +
-                                                snapshot.data.documents[index]
-                                                    ["nameClient"],
+                                            "Código del cliente: " +
+                                                codes[index],
                                             textAlign: TextAlign.left,
                                             style: TextStyle(fontSize: 26.0),
                                             overflow: TextOverflow.ellipsis,

@@ -1,6 +1,8 @@
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/CalificarCliente.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:localstorage/localstorage.dart';
 
 class LoginScreen extends StatefulWidget {
   static String tag = 'LoginScreen';
@@ -18,7 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool loginEnabled;
-  bool isVisible; 
+  bool isVisible;
   BuildContext contexto;
   TextEditingController _user = new TextEditingController();
   TextEditingController _passw = new TextEditingController();
@@ -114,6 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 //metodo de login para loguearse
   void loguearse(String user, String pass) async {
+    LocalStorage storage = new LocalStorage('famitiendas');
     await Firestore.instance
         .collection('usuarios')
         .getDocuments()
@@ -122,13 +125,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (doc.data['usuario'] == user &&
                         doc.data['contraseña'] == pass)
                       {
-                        Navigator.of(contexto).pushReplacement(
-                            MaterialPageRoute(builder: (contexto) {
-                          return new Menu();
-                        }))
-                      }else{
-                        print("credenciales invalidas!!")
+                        if (doc.data["admin"])
+                          {
+                            Navigator.of(contexto).pushReplacement(
+                                MaterialPageRoute(builder: (contexto) {
+                              storage.setItem("admin", doc.data["admin"]);
+                              storage.setItem("user", doc.data['usuario']);
+                              
+                              return new Menu();
+                            }))
+                          }
+                        else
+                          {
+                            Navigator.of(contexto).pushReplacement(
+                                MaterialPageRoute(builder: (contexto) {
+                              storage.setItem("admin", doc.data["admin"]);
+                              return new CalificaCliente();
+                            }))
+                          }
                       }
+                    else
+                      {print("credenciales invalidas!!")}
                   })
             });
 

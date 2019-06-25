@@ -7,6 +7,7 @@ class NotificationData{
 
 
     NotificationData(this.fecha,this.nombreAsesor,this.numeroVisitas);
+    NotificationData.toSave(this.fecha,this.nombreAsesor,this.numeroVisitas);
 
       toJson()=>{
         "fecha": fecha,

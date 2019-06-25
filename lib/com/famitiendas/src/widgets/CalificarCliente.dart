@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart'; 
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart';
 import 'package:flutter/material.dart';
 
 import 'Dialogs.dart';
@@ -15,7 +15,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
   bool loginEnabled;
   bool isVisible;
   int cantidad = 1;
-  List<Respuestas> respuestas= [];
+  List<Respuestas> respuestas = [];
   var preguntas = [];
   var opciones = ["Si", "No"];
 
@@ -25,34 +25,51 @@ class _CalificaClienteState extends State<CalificaCliente> {
   @override
   Widget build(BuildContext context) {
     contexto = context;
-    void loguearse() async {
+    void calificarClient() async {
       bool banderaRespuestas = false;
       preguntas.forEach((respuesta) => {
             if (respuesta == "") {banderaRespuestas = true}
           });
       if (!banderaRespuestas) {
-        int contador=0;
-        List<String> respuestasString=[];
+        int contador = 0;
+        List<String> respuestasString = [];
         for (Respuestas respuesta in respuestas) {
           respuesta.valor = preguntas[contador];
           contador++;
           //Respuestas resFin = new Respuestas.toSave(respuesta.pregunta, respuesta.valor);
           String resFin = '${respuesta.valor}';
           respuestasString.add(resFin);
-        } 
+        }
         try {
           Calification calification;
           var now = new DateTime.now();
           calification = new Calification.toSave("${nombreCliente.text}",
-              "${codigoClient.text}", now.toString(),respuestasString);
+              "${codigoClient.text}", now.toString(), respuestasString);
+          int contador = 1;
           Firestore.instance
-              .collection('calificaciones')
-              .document()
-              .setData(calification.toJson())
-              .then((data) {
-                new Dialogs().showDialogLogin("Exitoso",
-            "Tu calificación se ha guardado con exito", context);
-            //generar notificación 
+              .collection("calificaciones")
+              .getDocuments()
+              .then((data1) {
+            for (int i = 0; i < data1.documents.length; i++) {
+              if (data1.documents[i].data["codeClient"] == codigoClient.text) {
+                contador++;
+              }
+            }
+            Firestore.instance
+                .collection('calificaciones')
+                .document()
+                .setData(calification.toJson())
+                .then((data) {
+              new Dialogs().showDialogNotificaciones(
+                  "Exitoso",
+                  "Tu calificación se ha guardado con exito",
+                  context,
+                  now.toString(),
+                  calification.nameClient,
+                  contador,
+                  "-LhsEkrfprjtzx2g7QQb");
+              //generar notificación
+            });
           });
         } on Exception {
           new Dialogs().showDialogLogin("Error!", "erororoororor", context);
@@ -78,7 +95,6 @@ class _CalificaClienteState extends State<CalificaCliente> {
       child: TextFormField(
         autofocus: false,
         controller: codigoClient,
-        obscureText: true,
         //    controller: _passw,
         decoration: InputDecoration(
           hintText: 'Código Cliente',
@@ -96,7 +112,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () {
-          loguearse();
+          calificarClient();
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
@@ -136,7 +152,9 @@ class _CalificaClienteState extends State<CalificaCliente> {
                             itemBuilder: (BuildContext context, int index) {
                               if (preguntas.length <
                                   snapshot.data.documents.length) {
-                                Respuestas respuesta = new Respuestas("${snapshot.data.documents[index].data["Pregunta"]}", "${snapshot.data.documents[index].data["valor"]}");
+                                Respuestas respuesta = new Respuestas(
+                                    "${snapshot.data.documents[index].data["Pregunta"]}",
+                                    "${snapshot.data.documents[index].data["valor"]}");
                                 respuestas.add(respuesta);
                                 preguntas.add(snapshot
                                     .data.documents[index].data["valor"]);
