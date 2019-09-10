@@ -44,7 +44,7 @@ class _MenuState extends State<Menu> {
     void rediretClient() {
       print('Hola mundo rediretClient');
       Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (contexto) {
+          .push(MaterialPageRoute(builder: (contexto) {
         return new CalificaCliente();
       }));
     }

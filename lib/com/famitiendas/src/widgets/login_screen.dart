@@ -1,4 +1,5 @@
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/CalificarCliente.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Dialogs.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Image.asset('assets/logo.png'),
             SizedBox(
-              height: 98.0,
+              height: 170.0,
             ),
             new Center(
               child: new Column(
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(
-              height: 98.0,
+              height: 170.0,
             ),
             Image.asset('assets/logo.png')
           ],
@@ -117,6 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
 //metodo de login para loguearse
   void loguearse(String user, String pass) async {
     LocalStorage storage = new LocalStorage('famitiendas');
+    storage.clear();
+    bool entro = false;
     await Firestore.instance
         .collection('usuarios')
         .getDocuments()
@@ -127,28 +130,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       {
                         if (doc.data["admin"])
                           {
-                            Navigator.of(contexto).pushReplacement(
-                                MaterialPageRoute(builder: (contexto) {
+                            Navigator.of(contexto)
+                                .push(MaterialPageRoute(builder: (contexto) {
                               storage.setItem("admin", doc.data["admin"]);
                               storage.setItem("user", doc.data['usuario']);
-                              
+                              storage.setItem("loged", true);
+                              entro = true;
                               return new Menu();
                             }))
                           }
                         else
                           {
-                            Navigator.of(contexto).pushReplacement(
-                                MaterialPageRoute(builder: (contexto) {
+                            Navigator.of(contexto)
+                                .push(MaterialPageRoute(builder: (contexto) {
                               storage.setItem("admin", doc.data["admin"]);
+                              storage.setItem("loged", true);
                               return new CalificaCliente();
                             }))
                           }
                       }
-                    else
-                      {print("credenciales invalidas!!")}
                   })
             });
-
+    /*if (storage.getItem("loged")) {
+      new Dialogs()
+          .showDialogLogin("Fallido", "credenciales invalidas!!", contexto);
+    }*/
     print('Hola mundo');
   }
 }

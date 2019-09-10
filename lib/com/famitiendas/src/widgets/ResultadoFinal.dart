@@ -178,8 +178,8 @@ class _ResultadoFinalState extends State<ResultadoFinal> {
               }));
 
       final resultadoFinalEncuesta = Text(
-        "Resultado ${(valor / 13) * 100}% de 100% ",
-        style: TextStyle(color: Colors.black),
+        "Resultado ${((valor / 13) * 100).toStringAsFixed(2)}% de 100% ",
+        style: TextStyle(color: Colors.black,fontSize: 24.0),
         textAlign: TextAlign.end,
       );
 
