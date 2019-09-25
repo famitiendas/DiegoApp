@@ -135,6 +135,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               storage.setItem("admin", doc.data["admin"]);
                               storage.setItem("user", doc.data['usuario']);
                               storage.setItem("loged", true);
+                              storage.setItem("idDocument", doc.documentID);
+                              if (storage.getItem("playerID") != null &&
+                                  storage.getItem("playerID") != "") {
+                                Firestore.instance
+                                    .collection('usuarios')
+                                    .document(storage.getItem("idDocument"))
+                                    .updateData({
+                                  "playerID": storage.getItem("playerID")
+                                });
+                              }
                               entro = true;
                               return new Menu();
                             }))

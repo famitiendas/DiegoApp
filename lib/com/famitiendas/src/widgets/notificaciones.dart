@@ -40,7 +40,7 @@ class _NotificacionesState extends State<Notificaciones> {
       style: TextStyle(fontSize: 14.0, color: Colors.blueAccent),
     );
     final _label_visitas = Text(
-      'A Realizado ',
+      'Le han realizado ',
       style: TextStyle(fontSize: 14.0, color: Colors.blueAccent),
     );
     final _label_fecha = Text(
@@ -50,8 +50,8 @@ class _NotificacionesState extends State<Notificaciones> {
     return StreamBuilder(
       stream: Firestore.instance
           .collection("usuarios")
-          .document("prueba")
-          .collection("notificaciones")
+          .document("notif")
+          .collection("Notificaciones")
           .orderBy("fecha", descending: true)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {

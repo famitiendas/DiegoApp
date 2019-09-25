@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/entities/notification_data.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/utils/Notifications.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/CalificarCliente.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/ResultadoFinal.dart';
@@ -118,6 +119,9 @@ class Dialogs {
               child: new Text("Aceptar"),
               onPressed: () {
                 Navigator.of(context).pop();
+                NotificationData notificationData = new NotificationData.toSave(
+                    DateTime.now().toString(), nombre, visitas);
+                saveNotifications(notificationData);
                 Firestore.instance
                     .collection('calificaciones')
                     .getDocuments()
@@ -128,14 +132,22 @@ class Dialogs {
                       Firestore.instance
                           .collection('usuarios')
                           .getDocuments()
-                          .then((data) {
+                          .then((data) { 
+                            List<String> players=[];
                         for (int i = 0; i < data.documents.length; i++) {
+                         
                           if (data.documents[i].data["admin"]) {
+                            if(data.documents[i].data["playerID"]!= ""){
+                              players.add(data.documents[i].data["playerID"]);
+                            }
+                            
+                          }
+                          if((i+1) == data.documents.length && players.length != 0){
                             new NotificationManager().handleSendNotification(
                                 fecha,
                                 nombre,
                                 visitas,
-                                data.documents[i].data["playerID"],
+                                players,
                                 data1.documents[ji].documentID);
                           }
                         }
@@ -151,11 +163,11 @@ class Dialogs {
                       .pushReplacement(MaterialPageRoute(builder: (contexto) {
                     return new Menu();
                   }));
-                }else{
+                } else {
                   Navigator.of(contexto)
-                    .pushReplacement(MaterialPageRoute(builder: (contexto) {
-                  return new CalificaCliente();
-                }));
+                      .pushReplacement(MaterialPageRoute(builder: (contexto) {
+                    return new CalificaCliente();
+                  }));
                 }
               },
             ),
@@ -163,5 +175,17 @@ class Dialogs {
         );
       },
     );
+  }
+
+  void saveNotifications(NotificationData notification) async {
+    await Firestore.instance
+        .collection('usuarios')
+        .document("notif")
+        .collection('Notificaciones')
+        .document()
+        .setData(notification.toJson())
+        .then((notif) {
+      print('saved succesfully notification');
+    }).catchError((error) => print(error));
   }
 }

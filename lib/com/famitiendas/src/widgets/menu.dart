@@ -43,8 +43,7 @@ class _MenuState extends State<Menu> {
     contexto = context;
     void rediretClient() {
       print('Hola mundo rediretClient');
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (contexto) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (contexto) {
         return new CalificaCliente();
       }));
     }
@@ -239,6 +238,9 @@ class _MenuState extends State<Menu> {
         // guardar -> changes.to.userId
         LocalStorage storage = new LocalStorage('famitiendas');
         storage.setItem("playerID", changes.to.userId);
+        Firestore.instance.collection('usuarios').document(storage.getItem("idDocument")).updateData({"playerID":changes.to.userId}
+        );
+        
       }
     });
   }

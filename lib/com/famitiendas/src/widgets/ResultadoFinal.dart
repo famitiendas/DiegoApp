@@ -71,7 +71,7 @@ class _ResultadoFinalState extends State<ResultadoFinal> {
           child: StreamBuilder(
               stream: Firestore.instance
                   .collection("calificaciones")
-                  .document(storage.getItem("idDocumento"))
+                  .document(storage.getItem("idDocumento1"))
                   .snapshots(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 valor=0;

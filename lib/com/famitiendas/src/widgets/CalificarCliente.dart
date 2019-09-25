@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Calificacion.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Notif.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Notif.dart'
+    as prefix0;
 import 'package:flutter/material.dart';
 
 import 'Dialogs.dart';
@@ -42,9 +45,11 @@ class _CalificaClienteState extends State<CalificaCliente> {
         }
         try {
           Calification calification;
+          Notificationd notification;
           var now = new DateTime.now();
           calification = new Calification.toSave("${nombreCliente.text}",
               "${codigoClient.text}", now.toString(), respuestasString);
+
           int contador = 1;
           Firestore.instance
               .collection("calificaciones")
@@ -55,21 +60,28 @@ class _CalificaClienteState extends State<CalificaCliente> {
                 contador++;
               }
             }
+            notification = new Notificationd.toSave(
+                "${nombreCliente.text}", "${contador}", now.toString());
             Firestore.instance
                 .collection('calificaciones')
                 .document()
                 .setData(calification.toJson())
                 .then((data) {
-              new Dialogs().showDialogNotificaciones(
-                  "Exitoso",
-                  "Tu calificación se ha guardado con exito",
-                  context,
-                  now.toString(),
-                  calification.nameClient,
-                  contador,
-                  "-LhsEkrfprjtzx2g7QQb");
-              //generar notificación
-            });
+              //nombre,fecha// visitas
+
+              
+                //nombre,fecha// visitas
+
+                new Dialogs().showDialogNotificaciones(
+                    "Exitoso",
+                    "Tu calificación se ha guardado con exito",
+                    context,
+                    now.toString(),
+                    calification.nameClient,
+                    contador,
+                    "-LhsEkrfprjtzx2g7QQb");
+                //generar notificación
+              });
           });
         } on Exception {
           new Dialogs().showDialogLogin("Error!", "erororoororor", context);

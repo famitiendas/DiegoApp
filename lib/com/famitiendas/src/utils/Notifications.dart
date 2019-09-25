@@ -5,52 +5,28 @@ import 'package:onesignal/onesignal.dart';
 
 class NotificationManager {
   void handleSendNotification(String fecha, String nombreAsesor,
-      int numeroVisitas, String playerID, String idDocumento) async { 
+      int numeroVisitas, var playerID, String idDocumento) async {
     var data = {
       "fecha": fecha,
       "nombreAsesor": nombreAsesor,
       "numeroVisitas": numeroVisitas,
-      "idDocumento":idDocumento
+      "idDocumento": idDocumento
     };
 
     var imgUrlString =
         "http://cdn1-www.dogtime.com/assets/uploads/gallery/30-impossibly-cute-puppies/impossibly-cute-puppy-2.jpg";
-
-    var notification = OSCreateNotification(
-      additionalData: data,
-      playerIds: [playerID],
-      content: "El asesor $nombreAsesor ha tenido su visita número $numeroVisitas",
-      heading: "Transferencia",
-      bigPicture: imgUrlString,
-    ); 
-
-    LocalStorage storage = new LocalStorage('famitiendas');
-    NotificationData notificationData = new NotificationData.toSave(
-        DateTime.now().toString(), nombreAsesor, numeroVisitas);
-    await Firestore.instance.collection('usuarios').getDocuments().then((docs) {
-      docs.documents.forEach((doc) {
-        if (doc.data['usuario'] == storage.getItem("user")) {
-          saveNotifications(notificationData, doc.documentID);
-        }
-      });
-    });
-
-    var response = await OneSignal.shared.postNotification(notification);
-
-    print("Sent notification with response: $response");
-  }
-
-  void saveNotifications(
-      NotificationData notification, String documento) async {
-    await Firestore.instance
-        .collection('usuarios')
-        .document(documento)
-        .collection('Notificaciones')
-        .document()
-        .setData(notification.toJson())
-        .then((notif) {
-      print('saved succesfully');
-    }).then((error) => print(error));
+    for (int i = 0; i < playerID.length; i++) {
+      var notification = OSCreateNotification(
+        additionalData: data,
+        playerIds: [playerID[i]],
+        content:
+            "El asesor $nombreAsesor ha tenido su visita número $numeroVisitas",
+        heading: "Transferencia",
+        bigPicture: imgUrlString,
+      ); 
+      await OneSignal.shared.postNotification(notification);
+      print("no se ha estallado esta monda");
+    }
   }
 
   Future<String> getTokenUser(int telefono) async {

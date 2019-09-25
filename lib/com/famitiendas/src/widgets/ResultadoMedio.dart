@@ -39,7 +39,7 @@ class _ResultadoMedioState extends State<ResultadoMedio> {
                       return new Row(mainAxisSize: MainAxisSize.min, children: [
                         GestureDetector(
                             onTap: () {
-                              storage.setItem("idDocumento", listaIDS[index]);
+                              storage.setItem("idDocumento1", listaIDS[index]);
                               Navigator.of(context)
                                   .push(MaterialPageRoute(builder: (contexto) {
                                 return new ResultadoFinal();
