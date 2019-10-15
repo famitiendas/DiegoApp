@@ -6,11 +6,13 @@ import 'package:onesignal/onesignal.dart';
 class NotificationManager {
   void handleSendNotification(String fecha, String nombreAsesor,
       int numeroVisitas, var playerID, String idDocumento) async {
+    LocalStorage storage = new LocalStorage('famitiendas');
     var data = {
       "fecha": fecha,
-      "nombreAsesor": nombreAsesor,
+      "nombreAsesor": storage.getItem("user"),
       "numeroVisitas": numeroVisitas,
-      "idDocumento": idDocumento
+      "idDocumento": idDocumento,
+      "vendedor": nombreAsesor
     };
 
     var imgUrlString =

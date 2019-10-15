@@ -6,6 +6,7 @@ import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Notif.dar
 import 'package:flutter/material.dart';
 
 import 'Dialogs.dart';
+import 'login_screen.dart';
 
 class CalificaCliente extends StatefulWidget {
   CalificaCliente({Key key}) : super(key: key);
@@ -125,11 +126,28 @@ class _CalificaClienteState extends State<CalificaCliente> {
         ),
         onPressed: () {
           calificarClient();
+        }, 
+        color: Colors.lightBlueAccent,
+        child:
+            Text('Enviar Calificación', style: TextStyle(color: Colors.white)),
+      ),
+    );
+
+    final cerrarSesion = Padding(
+      padding: EdgeInsets.symmetric(vertical: 26.0),
+      child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        onPressed: () {
+          Navigator.of(contexto).pushReplacement(MaterialPageRoute(builder: (contexto) {
+              return new LoginScreen(); //ResultadoInicial
+            }));
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
         child:
-            Text('Enviar Calificación', style: TextStyle(color: Colors.white)),
+            Text('  Cerrar Sesión', style: TextStyle(color: Colors.white)),
       ),
     );
     final headerOptions = Row(
@@ -149,7 +167,7 @@ class _CalificaClienteState extends State<CalificaCliente> {
     );
     var entradas = 0;
     final listado = Container(
-        height: MediaQuery.of(context).size.height * 0.55,
+        height: MediaQuery.of(context).size.height * 0.45,
         child: StreamBuilder(
             stream: Firestore.instance.collection("preguntas").snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -303,7 +321,9 @@ class _CalificaClienteState extends State<CalificaCliente> {
                   headerOptions,
                   listado,
                   SizedBox(height: 5),
-                  loginButton
+                  loginButton,
+                  SizedBox(width: 5),
+                  cerrarSesion
                 ],
               ),
             ),

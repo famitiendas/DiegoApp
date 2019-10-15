@@ -39,6 +39,10 @@ class _NotificacionesState extends State<Notificaciones> {
       'El Asesor ',
       style: TextStyle(fontSize: 14.0, color: Colors.blueAccent),
     );
+    final _label_vendedor = Text(
+      'ha calificado al vendedor  ',
+      style: TextStyle(fontSize: 14.0, color: Colors.blueAccent),
+    );
     final _label_visitas = Text(
       'Le han realizado ',
       style: TextStyle(fontSize: 14.0, color: Colors.blueAccent),
@@ -105,6 +109,19 @@ class _NotificacionesState extends State<Notificaciones> {
                                               flex: 50,
                                             ),
                                             Expanded(
+                                              child: _label_vendedor,
+                                              flex: 50,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                '${snapshot.data.documents[index].data["vendedor"]}',
+                                                style: TextStyle(
+                                                    fontSize: 15.0,
+                                                    color: Colors.grey),
+                                              ),
+                                              flex: 50,
+                                            ),
+                                            Expanded(
                                               child: _label_visitas,
                                               flex: 50,
                                             ),
@@ -117,28 +134,29 @@ class _NotificacionesState extends State<Notificaciones> {
                                                     color: Colors.grey),
                                               ),
                                               flex: 50,
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: _label_fecha,
+                                                    flex: 50,
+                                                  ),
+                                                  Text(
+                                                    '$item',
+                                                    style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        color:
+                                                            Colors.green[600]),
+                                                  )
+                                                ],
+                                              ),
+                                              flex: 50,
                                             )
                                           ],
                                         ),
                                         flex: 50,
                                       ),
-                                      Expanded(
-                                        child: Column(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: _label_fecha,
-                                              flex: 50,
-                                            ),
-                                            Text(
-                                              '$item',
-                                              style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  color: Colors.green[600]),
-                                            )
-                                          ],
-                                        ),
-                                        flex: 50,
-                                      )
                                     ],
                                   ),
                                   color: Colors.white,

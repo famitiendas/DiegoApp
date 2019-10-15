@@ -119,8 +119,9 @@ class Dialogs {
               child: new Text("Aceptar"),
               onPressed: () {
                 Navigator.of(context).pop();
+                LocalStorage storage = new LocalStorage('famitiendas');
                 NotificationData notificationData = new NotificationData.toSave(
-                    DateTime.now().toString(), nombre, visitas);
+                    DateTime.now().toString(), storage.getItem("user"), visitas,nombre);
                 saveNotifications(notificationData);
                 Firestore.instance
                     .collection('calificaciones')
@@ -156,8 +157,7 @@ class Dialogs {
                   }
                 });
 
-                //aqui va el metodo
-                LocalStorage storage = new LocalStorage('famitiendas');
+                //aqui va el metodo 
                 if (storage.getItem("admin")) {
                   Navigator.of(contexto)
                       .pushReplacement(MaterialPageRoute(builder: (contexto) {

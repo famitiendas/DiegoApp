@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/entities/push_deliver.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/Dialogs.dart';
+import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/login_screen.dart';
 import 'package:famitiendas_distribuciones/com/famitiendas/src/widgets/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
@@ -187,6 +188,42 @@ class _MenuState extends State<Menu> {
           )),
     );
 
+final cerrarSesion = Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.0),
+      child: RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(16.0)),
+          onPressed: () {
+            Navigator.of(contexto).pushReplacement(MaterialPageRoute(builder: (contexto) {
+              return new LoginScreen(); //ResultadoInicial
+            }));
+          },
+          padding: EdgeInsets.all(12),
+          color: Colors.lightBlueAccent,
+          child: new Container(
+            height: 80.0,
+            width: 220.0,
+            child: new Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[ 
+                new Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 18.0,
+                    ),
+                    new Padding(
+                      padding: EdgeInsets.only(left: 14.0, top: 10.0),
+                      child: new Text('  Cerrar Sesión',
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 18.0)),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          )),
+    );
+
     return Scaffold(
       body: new Center(
         child: new Column(
@@ -196,7 +233,8 @@ class _MenuState extends State<Menu> {
             ),
             calificarClientew,
             notificaciones,
-            resultados
+            resultados,
+            cerrarSesion
           ],
         ),
       ),
